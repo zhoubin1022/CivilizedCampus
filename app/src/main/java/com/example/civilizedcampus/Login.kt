@@ -9,6 +9,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import com.google.gson.Gson
+import okhttp3.*
+import java.io.IOException
+import kotlin.concurrent.thread
 
 class Login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,24 +22,41 @@ class Login : AppCompatActivity() {
         val register:TextView = findViewById(R.id.register)
         register.setOnClickListener{
             val intent = Intent(this, Register::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, 1)
+
         }
         val login:Button = findViewById(R.id.login)
         login.setOnClickListener {
             val username = findViewById<EditText>(R.id.login_account).text.toString()
             val password = findViewById<EditText>(R.id.login_password).text.toString()
-            if (isCorrect(username=username,password=password)){
-                val editor = getSharedPreferences("remember", Context.MODE_PRIVATE).edit()
-                editor.putString("username", username)
-                editor.putString("password", password)
-                editor.putBoolean("logged", true)
-                editor.apply()
-                val intent = Intent(this,MainActivity::class.java)
-                startActivity(intent)
-                finish()
-            }else{
-                Toast.makeText(this,"密码错误",Toast.LENGTH_SHORT).show()
-            }
+            val client = OkHttpClient()
+            val request = Request.Builder().url("http://49.235.134.191:8080/user/login?account=$username&password=$password").build()
+            client.newCall(request).enqueue(object: Callback{
+                override fun onFailure(call: Call, e: IOException) {
+                    Toast.makeText(this@Login,"网络错误", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+
+                    val responseData = response.body?.string()
+                    val gson = Gson()
+                    val result = gson.fromJson(responseData, Result::class.java)
+                    if (result.code == 200){
+                        val editor = getSharedPreferences("remember", Context.MODE_PRIVATE).edit()
+                        editor.putString("username", username)
+                        editor.putString("password", password)
+                        editor.putBoolean("logged", true)
+                        editor.apply()
+                        val intent = Intent(this@Login,MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }else{
+                        Toast.makeText(this@Login,result.message,Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            })
+
         }
         val find:TextView = findViewById(R.id.find_password)
         find.setOnClickListener {
@@ -44,6 +65,18 @@ class Login : AppCompatActivity() {
 
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode){
+            1 -> if(resultCode == RESULT_OK){
+                val username = data?.getStringExtra("username")
+                val password = data?.getStringExtra("password")
+                findViewById<EditText>(R.id.login_account).setText(username)
+                findViewById<EditText>(R.id.login_password).setText(password)
+                Toast.makeText(this,"已填充密码",Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
     override fun onDestroy() {
         super.onDestroy()
         ActivityCollector.removeActivity(this)
@@ -75,8 +108,12 @@ class Login : AppCompatActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
-    private fun isCorrect(username:String, password:String):Boolean{
-        if (username=="admin"&&password=="123456") return true
-        return false
+
+    object HttpUtil{
+        fun sendHttpRequest(address: String, callback: okhttp3.Callback){
+            val client = OkHttpClient()
+            val request = Request.Builder().url(address).build()
+            client.newCall(request).enqueue(callback)
+        }
     }
 }

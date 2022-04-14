@@ -1,6 +1,8 @@
 package com.example.civilizedcampus
 
+import java.util.*
+
 class News(
-    val title: String, val info: String, val publisher: String,
-    val date: String, val time: String, val imageId: Int
+    val id: Int, val imageUrl:String, val title: String,
+    val desc: String, val publishAccount:String, val publishTime: Date
 )

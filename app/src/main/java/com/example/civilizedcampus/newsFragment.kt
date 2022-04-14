@@ -1,6 +1,8 @@
 package com.example.civilizedcampus
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.Toast
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import okhttp3.*
+import java.io.IOException
 
 
 class newsFragment : Fragment() {
@@ -29,29 +36,27 @@ class newsFragment : Fragment() {
     }
 
     private fun initNews() {
-        newsList.add(News(
-                "东楼的花",
-                "美丽的风景藏匿于知识的海洋，最漂亮的花配上最勤奋的人",
-                "lm",
-                "2022-3-20",
-                "12:00",R.drawable.img_1))
-        newsList.add(News(
-                "福大下雪了！！",
-                "震惊！在福大校园里竟发生这样的事...",
-                "dy",
-                "2022-3-19",
-                "12:00",R.drawable.img_2))
-        newsList.add(News(
-                "国王排名",
-                "来看看大家对国王排名的评价吧",
-                "zb",
-                "2022-3-18",
-                "12:00",R.drawable.img_3))
-        newsList.add(News(
-                "正确的",
-                "我们应该保持一个良好的心态",
-                "bc",
-                "2022-3-17",
-                "12:00",R.drawable.img_4))
+        val client = OkHttpClient()
+        val request = Request.Builder().url("http://49.235.134.191:8080/news/get").build()
+        client.newCall(request).enqueue(object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Toast.makeText(context,"网络错误", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+
+                val responseData = response.body?.string()
+                val gson = Gson()
+                val result = gson.fromJson(responseData, Result::class.java)
+                if (result.code == 200){
+                    val typeOf = object : TypeToken<List<News>>(){}.type
+                    val news = gson.fromJson<List<News>>(gson.toJson(result.data).toString(), typeOf)
+                    newsList.addAll(news)
+                }else{
+                    Toast.makeText(context,result.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        })
     }
 }
