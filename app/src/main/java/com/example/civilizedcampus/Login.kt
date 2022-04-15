@@ -33,7 +33,7 @@ class Login : AppCompatActivity() {
             val request = Request.Builder().url("http://49.235.134.191:8080/user/login?account=$username&password=$password").build()
             client.newCall(request).enqueue(object: Callback{
                 override fun onFailure(call: Call, e: IOException) {
-                    Toast.makeText(this@Login,"网络错误", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this@Login,"网络错误", Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(call: Call, response: Response) {

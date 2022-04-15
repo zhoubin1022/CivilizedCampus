@@ -40,7 +40,7 @@ class newsFragment : Fragment() {
         val request = Request.Builder().url("http://49.235.134.191:8080/news/get").build()
         client.newCall(request).enqueue(object: Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Toast.makeText(context,"网络错误", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context,"网络错误", Toast.LENGTH_SHORT).show()
             }
 
             override fun onResponse(call: Call, response: Response) {
