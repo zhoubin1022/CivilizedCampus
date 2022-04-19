@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.widget.Button
 import android.widget.EditText
@@ -12,7 +13,6 @@ import android.widget.Toast
 import com.google.gson.Gson
 import okhttp3.*
 import java.io.IOException
-import kotlin.concurrent.thread
 
 class Login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,17 +27,18 @@ class Login : AppCompatActivity() {
         }
         val login:Button = findViewById(R.id.login)
         login.setOnClickListener {
+            Log.d("login", "login")
             val username = findViewById<EditText>(R.id.login_account).text.toString()
             val password = findViewById<EditText>(R.id.login_password).text.toString()
             val client = OkHttpClient()
             val request = Request.Builder().url("http://49.235.134.191:8080/user/login?account=$username&password=$password").build()
             client.newCall(request).enqueue(object: Callback{
                 override fun onFailure(call: Call, e: IOException) {
-                    //Toast.makeText(this@Login,"网络错误", Toast.LENGTH_SHORT).show()
+                    e.printStackTrace()
+                    Log.d("login","error")
                 }
 
                 override fun onResponse(call: Call, response: Response) {
-
                     val responseData = response.body?.string()
                     val gson = Gson()
                     val result = gson.fromJson(responseData, Result::class.java)
@@ -47,6 +48,7 @@ class Login : AppCompatActivity() {
                         editor.putString("password", password)
                         editor.putBoolean("logged", true)
                         editor.apply()
+                        Log.d("login","success")
                         val intent = Intent(this@Login,MainActivity::class.java)
                         startActivity(intent)
                         finish()
@@ -77,23 +79,13 @@ class Login : AppCompatActivity() {
             }
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         ActivityCollector.removeActivity(this)
     }
+
     private var exitTime:Long = 0
-//    override fun onBackPressed() {
-//        if (System.currentTimeMillis()-exitTime>2000){
-//            Toast.makeText(this,"再按一次退出程序",Toast.LENGTH_SHORT).show()
-//            exitTime = System.currentTimeMillis()
-//        }else{
-//            ActivityCollector.finishAll()
-//        }
-//        super.onBackPressed()
-//    }
-
-
-
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK && event?.action == KeyEvent.ACTION_DOWN){
             if (System.currentTimeMillis()-exitTime>2000){
@@ -106,14 +98,5 @@ class Login : AppCompatActivity() {
         }
 
         return super.onKeyDown(keyCode, event)
-    }
-
-
-    object HttpUtil{
-        fun sendHttpRequest(address: String, callback: okhttp3.Callback){
-            val client = OkHttpClient()
-            val request = Request.Builder().url(address).build()
-            client.newCall(request).enqueue(callback)
-        }
     }
 }
