@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/feedback_background"
+    tools:context=".PhotoFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="400dp">
+
+        <ImageView
+            android:id="@+id/iv_take_pictures"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_weight="1"
+            android:src="@drawable/take_pictures" />
+
+        <ImageView
+            android:id="@+id/iv_history_records"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_weight="1"
+            android:src="@drawable/history_records" />
+
+    </LinearLayout>
+
+
+</FrameLayout>

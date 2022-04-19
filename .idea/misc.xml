@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/drawable/bottom_picture_bg.xml" value="0.1545" />
         <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1525" />
         <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/drawable/line_boder.xml" value="0.1995" />
         <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/drawable/tab_menu_background.xml" value="0.1455" />
@@ -14,10 +15,13 @@
         <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/layout/activity_login.xml" value="0.264" />
         <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/layout/activity_main.xml" value="0.176" />
         <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/layout/activity_register.xml" value="0.1" />
+        <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/layout/activity_submit.xml" value="0.23641304347826086" />
         <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/layout/fg_content.xml" value="0.18020833333333333" />
+        <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/layout/fragment_bottom_picture.xml" value="0.25364583333333335" />
         <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/layout/fragment_dashboard.xml" value="0.24592391304347827" />
         <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/layout/fragment_news.xml" value="0.24728260869565216" />
         <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/layout/fragment_news_list.xml" value="0.20104166666666667" />
+        <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/layout/fragment_photo.xml" value="0.1" />
         <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/layout/news_item.xml" value="0.1" />
         <entry key="..\:/Android/project/CivilizedCampus/CivilizedCampus/app/src/main/res/menu/bottom_nav_menu.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/HDY/AndroidStudioProjects/CivilizedCampus/app/src/main/res/layout/activity_login.xml" value="0.25" />

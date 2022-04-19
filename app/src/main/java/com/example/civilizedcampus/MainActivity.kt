@@ -1,4 +1,4 @@
-package com.example .civilizedcampus
+package com.example.civilizedcampus
 
 import android.content.Context
 import android.content.Intent
@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 
 class MainActivity : AppCompatActivity() , View.OnClickListener{
     private var fg1: newsFragment? = null
-    private var fg2: MyFragment? = null
+    private var fg2: PhotoFragment? = null
     private var fg3: MyFragment? = null
 
     private var news: TextView? = null
@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() , View.OnClickListener{
                 setSelected()
                 takephotos?.isSelected=true
                 if (fg2 == null){
-                    fg2 = MyFragment("The second Fragment")
+                    fg2 = PhotoFragment()
                 }
                 fg2?.let { replaceFragment(it) }
             }
