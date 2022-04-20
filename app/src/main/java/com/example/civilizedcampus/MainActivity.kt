@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() , View.OnClickListener{
         val prefs = getSharedPreferences("remember", Context.MODE_PRIVATE)
         val logged = prefs.getBoolean("logged", false)
         if (logged){
+            (application as LoginUser).username= prefs.getString("username","").toString()
             Toast.makeText(this,"已自动登录",Toast.LENGTH_LONG).show()
         }else{
             val intent = Intent(this,Login::class.java)

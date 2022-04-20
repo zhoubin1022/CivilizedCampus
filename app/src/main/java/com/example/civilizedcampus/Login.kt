@@ -48,6 +48,10 @@ class Login : AppCompatActivity() {
                         editor.putString("password", password)
                         editor.putBoolean("logged", true)
                         editor.apply()
+
+                        val appData=application as LoginUser
+                        appData.username=username
+
                         Log.d("login","success")
                         val intent = Intent(this@Login,MainActivity::class.java)
                         startActivity(intent)

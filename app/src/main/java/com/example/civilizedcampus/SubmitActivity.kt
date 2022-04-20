@@ -15,10 +15,7 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -36,6 +33,7 @@ import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.*
 
 
 class SubmitActivity : AppCompatActivity() , View.OnClickListener{
@@ -45,7 +43,10 @@ class SubmitActivity : AppCompatActivity() , View.OnClickListener{
     var imageUrl = ""
     var imageUri:Uri?=null
     val tag = "Tag"
+    var degree = 0
+    var category = "安全隐患"
     var mLocationClient:AMapLocationClient? = null
+    var feedBack:FeedBack?=null
     private val mapLoactionListener = AMapLocationListener { location ->
         if(location!=null){
             if(location.errorCode==0){
@@ -85,6 +86,8 @@ class SubmitActivity : AppCompatActivity() , View.OnClickListener{
         mLocationClient?.setLocationOption(mLocationOption)
         mLocationClient?.startLocation()
 
+        findViewById<Button>(R.id.bt_release).setOnClickListener(this)
+        findViewById<ImageView>(R.id.iv_back).setOnClickListener(this)
 
         val imageView = this.findViewById<ImageView>(R.id.iv_choose_pictures)
         imageView.setOnClickListener {
@@ -94,6 +97,26 @@ class SubmitActivity : AppCompatActivity() , View.OnClickListener{
             dialog!!.window?.findViewById<TextView>(R.id.photo)?.setOnClickListener(this)
             dialog!!.window?.findViewById<TextView>(R.id.cancel)?.setOnClickListener(this)
         }
+
+        val categoryGroup = findViewById<RadioGroup>(R.id.category)
+        categoryGroup.setOnCheckedChangeListener { _, id ->
+            if (id==R.id.btn_safe||id==R.id.btn_health||id==R.id.btn_order){
+                category=findViewById<RadioButton>(id).text.toString()
+            }
+        }
+
+        val degreeGroup = findViewById<RadioGroup>(R.id.btn_degree)
+        degreeGroup.setOnCheckedChangeListener { _, id ->
+            when(id){
+                R.id.btn_importance->{
+                    degree=1
+                }
+                R.id.btn_general->{
+                    degree=0
+                }
+            }
+        }
+
     }
 
     private fun RequestPermissions(){
@@ -102,7 +125,6 @@ class SubmitActivity : AppCompatActivity() , View.OnClickListener{
             for (p in permissions){
                 if(ContextCompat.checkSelfPermission(this, p)!=PackageManager.PERMISSION_GRANTED){
                     toRequest=true
-
                 }
             }
             if(toRequest){
@@ -172,18 +194,40 @@ class SubmitActivity : AppCompatActivity() , View.OnClickListener{
                 dialog?.dismiss()
             }
             R.id.bt_release -> {
+                allInfo()
+                Log.d(tag,"1${feedBack!!.toJson()}")
+                if(feedBack==null){
+                    Toast.makeText(this,"信息不全",Toast.LENGTH_SHORT).show()
+                }else{
+                    val result = uploadInfo()
+                    if(result){
+                        Log.d(tag,"3${feedBack!!.toJson()}")
+                        Toast.makeText(this,"上传成功",Toast.LENGTH_LONG).show()
+                        clear()
+                    }else{
+                        Toast.makeText(this,"上传失败",Toast.LENGTH_SHORT).show()
+                    }
 
+                }
             }
             R.id.iv_back ->{
                 finish()
+                //Toast.makeText(this,"退出",Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun checkIsNull():Boolean{
-        val title = this.findViewById<EditText>(R.id.et_input_title)
-        val desc = this.findViewById<EditText>(R.id.et_input_depiction)
-        return true
+    private fun allInfo(){
+        val title = this.findViewById<EditText>(R.id.et_input_title).text.toString()
+        val desc = this.findViewById<EditText>(R.id.et_input_depiction).text.toString()
+        val address = this.findViewById<TextView>(R.id.tv_position).text.toString()
+        val account = (application as LoginUser).username
+        val time = Date()
+        if (title.isEmpty()||desc.isEmpty()||address.isEmpty()||account.isEmpty()||imageUrl.isEmpty()){
+            return
+        }
+        feedBack = FeedBack(imageUrl = imageUrl, title = title, desc = desc, account = account,
+            address = address, category = category, degree = degree, time = time)
     }
 
 
@@ -263,7 +307,7 @@ class SubmitActivity : AppCompatActivity() , View.OnClickListener{
         }
 
     }
-
+    //低版本
     fun handleImageBeforeKitKat(data:Intent){
         val uri = data.data
         val file = uri?.let { getImagePath(it,null)?.let { saveFile(it) } }
@@ -342,8 +386,51 @@ class SubmitActivity : AppCompatActivity() , View.OnClickListener{
             }
 
         })
-        Thread.sleep(3000)
+        Thread.sleep(1000)
         return result
+    }
+
+    private fun uploadInfo():Boolean{
+        var result = false
+        val client = OkHttpClient()
+        val url = "http://49.235.134.191:8080/feedback/save"
+        val requestBody = RequestBody.create("application/json;charset=utf-8".toMediaTypeOrNull(),feedBack!!.toJson().toString())
+        val request = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build()
+        Log.d(tag,"start to upload")
+        Log.d(tag,"2${feedBack!!.toJson()}")
+        client.newCall(request).enqueue(object: Callback{
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d(tag,e.message.toString())
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                Log.d(tag, "response")
+                if (response.body!=null){
+                    val jsonObject = JSONObject(response.body!!.string())
+                    Log.d(tag,jsonObject.toString())
+                    if (jsonObject.getInt("code")==200){
+                        result=true
+                        Log.d(tag,"upload success")
+                    }else{
+                        //Log.d(tag, jsonObject.getInt("code").toString())
+                    }
+                }else{
+                    Log.d(tag, "response is null")
+                }
+            }
+        })
+        Thread.sleep(2000)
+        return result
+    }
+
+    private fun clear(){
+        this.findViewById<EditText>(R.id.et_input_title).setText("")
+        this.findViewById<EditText>(R.id.et_input_depiction).setText("")
+        this.findViewById<ImageView>(R.id.iv_choose_pictures).setImageResource(R.drawable.choose_pictures)
+        feedBack=null
     }
 
     override fun onDestroy() {
