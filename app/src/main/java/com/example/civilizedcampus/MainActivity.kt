@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.Window
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -20,18 +21,30 @@ class MainActivity : AppCompatActivity() , View.OnClickListener{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ActivityCollector.addActivity(this)
-        fg1 = newsFragment()
-        fg1?.let { replaceFragment(it) }
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
         bindViews()
+        takephotos?.isSelected = true
+        fg2 = PhotoFragment()
+        fg2?.let { replaceFragment(it) }
 
         val prefs = getSharedPreferences("remember", Context.MODE_PRIVATE)
-        val logged = prefs.getBoolean("logged", false)
-        if (logged){
+        val auto = prefs.getBoolean("auto", false)
+        val remember = prefs.getBoolean("remember", false)
+        val username = prefs.getString("username", "")
+        val password = prefs.getString("password", "")
+        if (auto){
             (application as LoginUser).username= prefs.getString("username","").toString()
             Toast.makeText(this,"已自动登录",Toast.LENGTH_LONG).show()
         }else{
             val intent = Intent(this,Login::class.java)
+            if(remember){
+                intent.putExtra("data",true)
+                intent.putExtra("username",username)
+                intent.putExtra("password",password)
+            }else {
+                intent.putExtra("data",false)
+            }
             startActivity(intent)
         }
     }

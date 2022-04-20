@@ -5,29 +5,34 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <RelativeLayout
-        android:id="@+id/top_bar"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="#ffffff">
+    <include
+        android:id="@+id/title_bar"
+        layout="@layout/titlebar_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp" />
+<!--    <RelativeLayout-->
+<!--        android:id="@+id/top_bar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="48dp"-->
+<!--        android:background="#ffffff">-->
 
-        <TextView
-            android:id="@+id/txt_top_bar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:textColor="#000000"
-            android:text="校 园 新 闻"/>
+<!--        <TextView-->
+<!--            android:id="@+id/txt_top_bar"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_centerInParent="true"-->
+<!--            android:gravity="center"-->
+<!--            android:text="校 园 新 闻"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textSize="20sp" />-->
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2px"
-            android:background="#888888"
-            android:layout_alignParentBottom="true"/>
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="2px"-->
+<!--            android:background="#888888"-->
+<!--            android:layout_alignParentBottom="true"/>-->
 
-    </RelativeLayout>
+<!--    </RelativeLayout>-->
 
     <LinearLayout
         android:id="@+id/tab_bar"
@@ -49,7 +54,7 @@
             android:padding="5dp"
             android:text="新闻"
             android:textColor="@drawable/tab_menu_text"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/txt_takephotos"
@@ -63,7 +68,7 @@
             android:padding="5dp"
             android:text="随手拍"
             android:textColor="@drawable/tab_menu_text"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/txt_homepage"
@@ -77,7 +82,7 @@
             android:padding="5dp"
             android:text="主页"
             android:textColor="@drawable/tab_menu_text"
-            android:textSize="16sp"/>
+            android:textSize="14sp"/>
 
     </LinearLayout>
 
@@ -93,6 +98,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/tab_bar"
-        android:layout_below="@id/top_bar"/>
+        android:layout_below="@id/title_bar" />
 
 </RelativeLayout>

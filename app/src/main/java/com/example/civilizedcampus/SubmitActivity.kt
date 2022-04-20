@@ -74,11 +74,11 @@ class SubmitActivity : AppCompatActivity() , View.OnClickListener{
         setContentView(R.layout.activity_submit)
         RequestPermissions()
 
+        //定位相关信息
         AMapLocationClient.updatePrivacyShow(applicationContext,true,true)
         AMapLocationClient.updatePrivacyAgree(applicationContext,true)
         mLocationClient= AMapLocationClient(applicationContext)
         mLocationClient?.setLocationListener(mapLoactionListener)
-
         val mLocationOption = AMapLocationClientOption()
         mLocationOption.locationMode = AMapLocationClientOption.AMapLocationMode.Hight_Accuracy
         mLocationOption.locationPurpose = AMapLocationClientOption.AMapLocationPurpose.SignIn
@@ -216,7 +216,7 @@ class SubmitActivity : AppCompatActivity() , View.OnClickListener{
             }
         }
     }
-
+    //获取反馈的信息
     private fun allInfo(){
         val title = this.findViewById<EditText>(R.id.et_input_title).text.toString()
         val desc = this.findViewById<EditText>(R.id.et_input_depiction).text.toString()
@@ -432,7 +432,6 @@ class SubmitActivity : AppCompatActivity() , View.OnClickListener{
         this.findViewById<ImageView>(R.id.iv_choose_pictures).setImageResource(R.drawable.choose_pictures)
         feedBack=null
     }
-
     override fun onDestroy() {
         super.onDestroy()
         mLocationClient?.stopLocation()

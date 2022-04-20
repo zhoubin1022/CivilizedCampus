@@ -26,6 +26,7 @@ class newsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        (activity as MainActivity).findViewById<View>(R.id.title_bar).visibility=View.VISIBLE
         val view = inflater.inflate(R.layout.fragment_news, container, false)
         if(newsList.size==0) {
             initNews()

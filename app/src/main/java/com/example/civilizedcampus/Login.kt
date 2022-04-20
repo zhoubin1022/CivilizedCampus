@@ -6,25 +6,41 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.google.gson.Gson
 import okhttp3.*
 import java.io.IOException
 
-class Login : AppCompatActivity() {
+class Login : AppCompatActivity(), CompoundButton.OnCheckedChangeListener {
+
+    var isRemember = false
+    var isAuto = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ActivityCollector.addActivity(this)
         setContentView(R.layout.activity_login)
+        //主页面自动登录
+        val fill = intent.getBooleanExtra("data",false)
+        if (fill){
+            findViewById<EditText>(R.id.login_account).setText(intent.getStringExtra("username"))
+            findViewById<EditText>(R.id.login_password).setText(intent.getStringExtra("password"))
+            Toast.makeText(this,"已填充密码",Toast.LENGTH_SHORT).show()
+        }
+        //复选框设置监听事件
+        val remember_box = findViewById<CheckBox>(R.id.remember)
+        remember_box.setOnCheckedChangeListener(this)
+        val auto_box = findViewById<CheckBox>(R.id.auto)
+        auto_box.setOnCheckedChangeListener(this)
+
+        //注册点击事件
         val register:TextView = findViewById(R.id.register)
         register.setOnClickListener{
             val intent = Intent(this, Register::class.java)
             startActivityForResult(intent, 1)
 
         }
+
+        //登录点击事件
         val login:Button = findViewById(R.id.login)
         login.setOnClickListener {
             Log.d("login", "login")
@@ -43,10 +59,16 @@ class Login : AppCompatActivity() {
                     val gson = Gson()
                     val result = gson.fromJson(responseData, Result::class.java)
                     if (result.code == 200){
+                        //保存密码
                         val editor = getSharedPreferences("remember", Context.MODE_PRIVATE).edit()
-                        editor.putString("username", username)
-                        editor.putString("password", password)
-                        editor.putBoolean("logged", true)
+                        if(isRemember){
+                            editor.putString("username", username)
+                            editor.putString("password", password)
+                            editor.putBoolean("remember", true)
+                            if (isAuto){
+                                editor.putBoolean("auto", true)
+                            }
+                        }
                         editor.apply()
 
                         val appData=application as LoginUser
@@ -57,20 +79,15 @@ class Login : AppCompatActivity() {
                         startActivity(intent)
                         finish()
                     }else{
-                        Toast.makeText(this@Login,result.message,Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(this@Login,result.message,Toast.LENGTH_SHORT).show()
                     }
                 }
-
             })
 
         }
-        val find:TextView = findViewById(R.id.find_password)
-        find.setOnClickListener {
-            Toast.makeText(this,"该功能暂未上架",Toast.LENGTH_LONG).show()
-        }
-
     }
 
+    //注册页面返回的数据
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when(requestCode){
@@ -89,6 +106,7 @@ class Login : AppCompatActivity() {
         ActivityCollector.removeActivity(this)
     }
 
+    //两次返回才成功
     private var exitTime:Long = 0
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK && event?.action == KeyEvent.ACTION_DOWN){
@@ -102,5 +120,17 @@ class Login : AppCompatActivity() {
         }
 
         return super.onKeyDown(keyCode, event)
+    }
+
+    //复选框监听事件
+    override fun onCheckedChanged(checkBox: CompoundButton?, checked: Boolean) {
+        when(checkBox?.id){
+            R.id.remember->{
+                isRemember=true
+            }
+            R.id.auto->{
+                isAuto=true
+            }
+        }
     }
 }

@@ -14,6 +14,7 @@ class MyFragment(val text:String) : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        (activity as MainActivity).findViewById<View>(R.id.title_bar).visibility=View.GONE
         val view = inflater.inflate(R.layout.fg_content, container, false)
         val text_content = view.findViewById<TextView>(R.id.txt_content)
         //Toast.makeText(context,text,Toast.LENGTH_SHORT).show()
